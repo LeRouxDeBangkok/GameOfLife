@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as FuncAnimation
+from matplotlib.animation import FuncAnimation
 
 ROWS = 120
 COLS = 160
