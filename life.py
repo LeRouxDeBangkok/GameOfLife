@@ -7,9 +7,7 @@ COLS = 160
 DENSITY = 0.20
 INTERVAL_MS = 60
 
-rng = np.random.default_rng()
-grid = rng.random((ROWS, COLS)) < DENSITY
-grid = grid.astype(np.uint8)
+grid = np.zeros((ROWS, COLS), dtype=np.uint8)
 
 def neighbors(a: np.ndarray) -> np.ndarray:
     return (
@@ -36,12 +34,33 @@ img = ax.imshow(
     vmin=0, vmax = 1
 )
 ax.axis('off')
+running = False
+
+def on_click(event):
+    if event.inaxes != ax:
+        return
+    col = int(event.xdata)
+    row = int(event.ydata)
+    grid[row,col] ^= 1
+    img.set_data(grid)
+    plt.draw()
+
+fig.canvas.mpl_connect('button_press_event', on_click)
+
+def on_key(event):
+    global running
+    if event.key == ' ':
+        running = not running
+
+fig.canvas.mpl_connect('key_press_event', on_key)
 
 def animate(_):
     global grid
-    grid = step(grid)
-    img.set_data(grid)
+    if running:
+        grid = step(grid)
+        img.set_data(grid)
     return (img,)
+
 
 ani = FuncAnimation(fig, animate, interval=INTERVAL_MS, blit=True)
 plt.show()
