@@ -33,7 +33,12 @@ img = ax.imshow(
     cmap='gray',
     vmin=0, vmax = 1
 )
-ax.axis('off')
+ax.set_xticks(np.arange(-0.5, COLS, 1), minor=True)
+ax.set_yticks(np.arange(-0.5, ROWS, 1), minor=True)
+ax.grid(which="minor", color="gray", linestyle='-', linewidth=0.5, alpha=0.3)
+ax.set_xticks([])
+ax.set_yticks([])
+
 running = False
 
 def on_click(event):
