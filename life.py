@@ -28,9 +28,14 @@ def step (a: np.ndarray) -> np.ndarray:
     return (survive | born).astype(np.uint8)
 
 fig, ax = plt.subplots()
-img = ax.imshow(grid, interpolation='nearest')
-ax.set_xticks([]); ax.set_yticks([])
-ax.set_title("Conway's Game Of Life")
+fig.patch.set_facecolor('black')
+img = ax.imshow(
+    grid,
+    interpolation='none',
+    cmap='gray',
+    vmin=0, vmax = 1
+)
+ax.axis('off')
 
 def animate(_):
     global grid
