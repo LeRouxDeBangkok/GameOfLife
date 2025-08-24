@@ -4,7 +4,6 @@ from matplotlib.animation import FuncAnimation
 
 ROWS = 120
 COLS = 160
-DENSITY = 0.20
 INTERVAL_MS = 60
 
 grid = np.zeros((ROWS, COLS), dtype=np.uint8)
@@ -19,7 +18,7 @@ def neighbors(a: np.ndarray) -> np.ndarray:
         np.roll(np.roll(a, -1, 0), -1, 1)
     )
 
-def step (a: np.ndarray) -> np.ndarray:
+def step(a: np.ndarray) -> np.ndarray:
     n = neighbors(a)
     survive = (a == 1) & ((n == 2) | (n == 3))
     born = (a == 0) & (n == 3)
@@ -31,11 +30,14 @@ img = ax.imshow(
     grid,
     interpolation='none',
     cmap='gray',
-    vmin=0, vmax = 1
+    vmin=0, vmax=1
 )
+
+# grid lines overlay
 ax.set_xticks(np.arange(-0.5, COLS, 1), minor=True)
 ax.set_yticks(np.arange(-0.5, ROWS, 1), minor=True)
 ax.grid(which="minor", color="gray", linestyle='-', linewidth=0.5, alpha=0.3)
+ax.tick_params(which="both", bottom=False, left=False, labelbottom=False, labelleft=False)
 
 running = False
 
@@ -44,9 +46,10 @@ def on_click(event):
         return
     col = int(event.xdata)
     row = int(event.ydata)
-    grid[row,col] ^= 1
-    img.set_data(grid)
-    plt.draw()
+    if 0 <= row < ROWS and 0 <= col < COLS:
+        grid[row, col] ^= 1
+        img.set_data(grid)
+        fig.canvas.draw_idle()  # force update
 
 fig.canvas.mpl_connect('button_press_event', on_click)
 
@@ -64,6 +67,5 @@ def animate(_):
         img.set_data(grid)
     return (img,)
 
-
-ani = FuncAnimation(fig, animate, interval=INTERVAL_MS, blit=True)
+ani = FuncAnimation(fig, animate, interval=INTERVAL_MS, blit=False)
 plt.show()
