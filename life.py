@@ -24,18 +24,19 @@ def step(a: np.ndarray) -> np.ndarray:
     born = (a == 0) & (n == 3)
     return (survive | born).astype(np.uint8)
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8, 6))
 fig.patch.set_facecolor('black')
 img = ax.imshow(
     grid,
     interpolation='none',
     cmap='gray',
-    vmin=0, vmax=1
+    vmin=0, vmax=1,
+    extent = [0, COLS, ROWS, 0]
 )
+ax.set_aspect('equal')
 
-# grid lines overlay
-ax.set_xticks(np.arange(-0.5, COLS, 1), minor=True)
-ax.set_yticks(np.arange(-0.5, ROWS, 1), minor=True)
+ax.set_xticks(np.arange(0, COLS, 1), minor=True)
+ax.set_yticks(np.arange(0, ROWS, 1), minor=True)
 ax.grid(which="minor", color="gray", linestyle='-', linewidth=0.5, alpha=0.3)
 ax.tick_params(which="both", bottom=False, left=False, labelbottom=False, labelleft=False)
 
@@ -68,4 +69,7 @@ def animate(_):
     return (img,)
 
 ani = FuncAnimation(fig, animate, interval=INTERVAL_MS, blit=False)
+fig.tight_layout(pad=0)
+plt.subplots_adjust(left=0, right =1, top=1, bottom=0)
+
 plt.show()
