@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from matplotlib.collections import LineCollection
 
 ROWS = 90
 COLS = 160
@@ -45,6 +46,7 @@ ax.grid(which="minor", color="gray", linestyle='-', linewidth=0.8, alpha=0.4)
 ax.tick_params(which="both", bottom=False, left=False, labelbottom=False, labelleft=False)
 
 running = False
+show_grid = True
 
 def on_click(event):
     if event.inaxes != ax or event.xdata is None or event.ydata is None:
@@ -58,9 +60,14 @@ def on_click(event):
 fig.canvas.mpl_connect('button_press_event', on_click)
 
 def on_key(event):
-    global running
+    global running, show_grid
     if event.key == ' ':
         running = not running
+    elif event.key == 'g':
+        show_grid = not show_grid
+        for line in ax.xaxis.get_gridlines() + ax.yaxis.get_gridlines():
+            line.set_visible(show_grid)
+        fig.canvas.draw_idle()
 
 fig.canvas.mpl_connect('key_press_event', on_key)
 
