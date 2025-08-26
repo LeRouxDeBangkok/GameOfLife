@@ -42,8 +42,19 @@ ax.set_ylim(ROWS - 0.5, -0.5)
 
 ax.set_xticks(np.arange(-0.5, COLS, 1), minor=True)
 ax.set_yticks(np.arange(-0.5, ROWS, 1), minor=True)
-ax.grid(which="minor", color="gray", linestyle='-', linewidth=0.8, alpha=0.4)
+
 ax.tick_params(which="both", bottom=False, left=False, labelbottom=False, labelleft=False)
+x_lines = np.arange(-0.5, COLS - 0.5 + 1, 1)
+y_lines = np.arange(-0.5, ROWS - 0.5 + 1, 1)
+
+v_segments = [((x, -0.5), (x, ROWS - 0.5)) for x in x_lines]
+h_segments = [((-0.5, y), (COLS - 0.5, y)) for y in y_lines]
+
+grid_v = LineCollection(v_segments, linewidths=0.8, colors='gray', alpha=0.4, zorder=3)
+grid_h = LineCollection(h_segments, linewidths=0.8, colors='gray', alpha=0.4, zorder=3)
+ax.add_collection(grid_v)
+ax.add_collection(grid_h)
+# ------------------------------------------------------------------
 
 running = False
 show_grid = True
@@ -65,8 +76,12 @@ def on_key(event):
         running = not running
     elif event.key == 'g':
         show_grid = not show_grid
-        for line in ax.xaxis.get_gridlines() + ax.yaxis.get_gridlines():
-            line.set_visible(show_grid)
+        if show_grid:
+            grid_v.set_color('gray');  grid_v.set_alpha(0.4)
+            grid_h.set_color('gray');  grid_h.set_alpha(0.4)
+        else:
+            grid_v.set_color('black'); grid_v.set_alpha(0.0)
+            grid_h.set_color('black'); grid_h.set_alpha(0.0)
         fig.canvas.draw_idle()
 
 fig.canvas.mpl_connect('key_press_event', on_key)
@@ -76,7 +91,7 @@ def animate(_):
     if running:
         grid = step(grid)
         img.set_data(grid)
-    return (img,)
+    return (img,)  # no blitting; grid overlays stay stable
 
 ani = FuncAnimation(fig, animate, interval=INTERVAL_MS, blit=False)
 plt.subplots_adjust(left=0, right =1, top=1, bottom=0)
@@ -88,7 +103,7 @@ def on_resize(event):
     if win > target:
         h = 1.0
         w = target * (fh / fw)
-        ax.set_position([0.5 * (1 -w), 0.0, w, h])
+        ax.set_position([0.5 * (1 - w), 0.0, w, h])
     else:
         w = 1.0
         h = (1 / target) * (fw / fh)
