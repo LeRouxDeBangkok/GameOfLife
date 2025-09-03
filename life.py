@@ -54,7 +54,6 @@ grid_v = LineCollection(v_segments, linewidths=0.8, colors='gray', alpha=0.4, zo
 grid_h = LineCollection(h_segments, linewidths=0.8, colors='gray', alpha=0.4, zorder=3)
 ax.add_collection(grid_v)
 ax.add_collection(grid_h)
-# ------------------------------------------------------------------
 
 running = False
 show_grid = True
@@ -91,7 +90,7 @@ def animate(_):
     if running:
         grid = step(grid)
         img.set_data(grid)
-    return (img,)  # no blitting; grid overlays stay stable
+    return (img,)
 
 ani = FuncAnimation(fig, animate, interval=INTERVAL_MS, blit=False)
 plt.subplots_adjust(left=0, right =1, top=1, bottom=0)
